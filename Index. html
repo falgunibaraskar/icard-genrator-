@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student ID Card Generator</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div id="login-container">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Email"/>
+    <input type="password" id="password" placeholder="Password"/>
+    <button onclick="login()">Login</button>
+    <p>Don't have an account? <button onclick="signup()">Sign Up</button></p>
+  </div>
+
+  <div id="main-app" style="display:none;">
+    <h1>ID Card Generator</h1>
+    <div class="form">
+      <input type="text" id="name" placeholder="Name" />
+      <input type="text" id="roll" placeholder="Roll Number" />
+      <input type="text" id="class" placeholder="Class" />
+      <input type="text" id="mobile" placeholder="Mobile Number" />
+      <select id="template-select">
+        <option value="template1">Template 1</option>
+        <option value="template2">Template 2</option>
+      </select>
+      <button onclick="generateID()">Generate ID Card</button>
+    </div>
+
+    <div id="id-preview">
+      <!-- ID card will appear here -->
+    </div>
+
+    <button onclick="downloadPDF()">Download as PDF</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
+<script>css<script>
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background: #f2f2f2;
+}
+
+input, select, button {
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  width: 250px;
+}
+
+.form {
+  margin-bottom: 20px;
+}
+
+#id-preview {
+  border: 2px solid #000;
+  width: 300px;
+  padding: 20px;
+  background: white;
+}
+
+.template1 {
+  background-color: #e3f2fd;
+  color: black;
+}
+
+.template2 {
+  background-color: #ffe0b2;
+  color: black;
+}
+
+#login-container {
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+}
+<script>javascript<script>
+function generateIDCard() {
+  const name = document.getElementById("name").value;
+  const roll = document.getElementById("roll").value;
+  const studentClass = document.getElementById("class").value;
+  const mobile = document.getElementById("mobile").value;
+
+  document.getElementById("preview-name").textContent = name;
+  document.getElementById("preview-roll").textContent = roll;
+  document.getElementById("preview-class").textContent = studentClass;
+
+  const qrData = `Name: ${name}\nRoll: ${roll}\nClass: ${studentClass}\nMobile: ${mobile}`;
+  QRCode.toCanvas(document.getElementById("qr-code"), qrData, error => {
+    if (error) console.error(error);
+  });
+}
+
+function changeTemplate() {
+  const selected = document.getElementById("template").value;
+  const card = document.getElementById("card-preview");
+  card.className = "id-card " + selected;
+}
+
+function downloadPDF() {
+  const element = document.getElementById("card-preview");
+  html2pdf().from(element).save("student_id_card.pdf");
+}
